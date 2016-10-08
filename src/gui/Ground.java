@@ -17,7 +17,7 @@ import java.util.Random;
 /**
  * Created by alex on 05/10/2016.
  */
-public class Ground extends JPanel  {
+public class Ground extends JPanel implements Observable   {
     List<Food> foodList;
     private List<Pigeon> pigeonList;
 
@@ -26,7 +26,7 @@ public class Ground extends JPanel  {
         foodList = new ArrayList<>();
         setBackground(Color.DARK_GRAY);
         addMouseListener(new AddFood());
-        Pigeon jeannot = new Pigeon(50,50,"jeannot");
+        Pigeon jeannot = new Pigeon(50,50,"jeannot",this);
         pigeonList.add(jeannot);
 
     }
@@ -48,6 +48,12 @@ public class Ground extends JPanel  {
             }
 
         }
+    }
+
+    @Override
+    public void newFood(List<Food> foodList) {
+        this.foodList = foodList;
+
     }
 
     private class AddFood implements MouseListener{
@@ -72,6 +78,14 @@ public class Ground extends JPanel  {
                     for (Observable p:pigeonList
                             ) {
                         p.newFood(foodList);
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                super.run();
+                                ((Pigeon)p).move();
+                                ((Pigeon)p).setCible(null);
+                            }
+                        }.start();
                     }
                 }
             }.start();

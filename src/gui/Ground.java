@@ -18,22 +18,32 @@ import java.util.Random;
  * Created by alex on 05/10/2016.
  */
 public class Ground extends JPanel implements Observable   {
-    List<Food> foodList;
-    private List<Pigeon> pigeonList;
+
+    private List<Food> foodList;
+    private List<Observable> pigeonList;
+    private Pigeon jeannot;
+    private Image img = Toolkit.getDefaultToolkit().getImage("./ressource/sprite/pigeons.png");
 
     public Ground() {
         pigeonList = new ArrayList<>();
         foodList = new ArrayList<>();
         setBackground(Color.DARK_GRAY);
         addMouseListener(new AddFood());
-        Pigeon jeannot = new Pigeon(50,50,"jeannot",this);
-        pigeonList.add(jeannot);
+
+
+
+    }
+
+    public void startPigeon(){
+        jeannot = new Pigeon(50,50,"jeannot",this);
+        addObservableList(jeannot);
+        jeannot.start();
 
     }
 
     @Override
-    public void paint(Graphics g) {
-        super.paint(g);
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
         if(!foodList.isEmpty()){
             for (Food f:foodList
                     ) {
@@ -41,19 +51,36 @@ public class Ground extends JPanel implements Observable   {
             }
 
         }
-        if(!pigeonList.isEmpty()){
-            for (Pigeon p:pigeonList
-                    ) {
-                g.drawImage(p.getImg(), p.getX(),p.getY(),48,48,null);
-            }
 
-        }
+        g.drawImage(jeannot.getImg(), jeannot.getX(),jeannot.getY(),48,48,null);
+        g.dispose();
     }
+
 
     @Override
     public void newFood(List<Food> foodList) {
         this.foodList = foodList;
 
+    }
+
+    public List<Observable> getPigeonList() {
+        return pigeonList;
+    }
+
+    public void addObservableList(Observable observable) {
+        pigeonList.add(observable);
+    }
+
+    public List<Food> getFoodList() {
+        return foodList;
+    }
+
+    public void addFood(Food food) {
+        this.foodList.add(food);
+    }
+
+    public void removeFood(int index) {
+        this.foodList.remove(index);
     }
 
     private class AddFood implements MouseListener{
@@ -78,14 +105,6 @@ public class Ground extends JPanel implements Observable   {
                     for (Observable p:pigeonList
                             ) {
                         p.newFood(foodList);
-                        new Thread(){
-                            @Override
-                            public void run() {
-                                super.run();
-                                ((Pigeon)p).move();
-                                ((Pigeon)p).setCible(null);
-                            }
-                        }.start();
                     }
                 }
             }.start();
@@ -112,6 +131,5 @@ public class Ground extends JPanel implements Observable   {
 
         }
     }
-
 
 }

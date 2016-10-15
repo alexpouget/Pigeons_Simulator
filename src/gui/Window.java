@@ -2,6 +2,7 @@ package gui;
 
 import Entity.Food;
 import Entity.Pigeon;
+import pattern.Observable;
 import utils.Constant;
 
 import javax.swing.*;
@@ -16,7 +17,7 @@ import java.util.List;
 public class Window extends JFrame {
 
     private JPanel ground;
-
+    private Pigeon jeannot;
 
     public Window(){
 
@@ -25,10 +26,10 @@ public class Window extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
         Container container = getContentPane();
-        ground = new Ground();
+        ground = new Ground(); //initialisation du terrain
         container.add(ground);
+        ((Ground)ground).startPigeon();
 
-        repaint();
 
 
         setVisible(true);

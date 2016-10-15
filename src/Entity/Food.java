@@ -1,6 +1,9 @@
 package Entity;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by alex on 05/10/2016.
@@ -19,10 +22,14 @@ public class Food {
         this.y = y;
     }
 
-    public Food(int x, int y,Image img) {
+    public Food(int x, int y,String img) {
         this.x = x;
         this.y = y;
-        this.img = img;
+        try {
+            this.img = ImageIO.read(new File(img));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public int getX() {

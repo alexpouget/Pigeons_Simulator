@@ -9,7 +9,7 @@ public class FreshFood extends Food{
 
 
     public FreshFood(int x, int y) {
-        super(x,y,Toolkit.getDefaultToolkit().getImage("./ressource/sprite/tacos.png"));
+        super(x,y,"./ressource/sprite/tacos.png");
 
     }
 }

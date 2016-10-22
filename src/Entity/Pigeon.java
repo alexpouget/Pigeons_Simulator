@@ -119,16 +119,12 @@ public class Pigeon extends Thread implements Observable {
         //list des plat a dispo go eat
         System.out.println("notified");
         this.foodList = foodList;
-        cible = findCloser();
-        //start();
-        //foodList.remove(0);
-        //ground.newFood(foodList);
-
+        cible = findFreshFood();
     }
 
     //move function
-    public void move() {
-        while (cible != null && ((abs(getX() - cible.getX()) >= 10) && (abs(getY() - cible.getY()) >= 10))){
+    public void move() throws InterruptedException {
+        while ((abs(getX() - cible.getX()) >= 10) || (abs(getY() - cible.getY()) >= 10)){
             if (abs(getX() - cible.getX()) < 10) {
 
             } else if (getX() < cible.getX()) {
@@ -146,31 +142,26 @@ public class Pigeon extends Thread implements Observable {
                 //up
                 setY(getY() - 5);
             }
-            ground.paint(ground.getGraphics());
-            //ground.repaint();
+
+            ground.repaint();
+            try {
+                Thread.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         eat();
     }
 
-    public Food findCloser() {
+    public Food findFreshFood() {
         synchronized (lock) {
-            if (cible != null) {
-                if (foodList.contains(cible)) {
-                    return cible;
-                }
+
+            if (!this.foodList.isEmpty()) {
+                cible = this.foodList.get(0);
+            } else {
+                cible = null;
             }
 
-            for (Food f : foodList
-                    ) {
-                if (cible == null) {
-                    cible = f;
-                    continue;
-                }
-                if (abs(getX() - f.getX()) + (abs(getY() - f.getY())) <
-                        abs(getX() - cible.getX()) + (abs(getY() - cible.getY()))) {
-                    cible = f;
-                }
-            }
             return cible;
         }
     }
@@ -181,7 +172,7 @@ public class Pigeon extends Thread implements Observable {
             cible = null;
         }
         System.out.println("manger !!");
-        findCloser();
+        findFreshFood();
         ground.repaint();
     }
 
@@ -196,8 +187,12 @@ public class Pigeon extends Thread implements Observable {
                     e.printStackTrace();
                 }
             }
-            System.out.println("move");
-            move();
+
+            try {
+                move();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             try {
                 Thread.sleep(1000);

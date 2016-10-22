@@ -60,7 +60,6 @@ public class Ground extends JPanel implements Observable   {
     @Override
     public void newFood(List<Food> foodList) {
         this.foodList = foodList;
-
     }
 
     public List<Observable> getPigeonList() {

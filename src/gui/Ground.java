@@ -45,8 +45,7 @@ public class Ground extends JPanel implements Observable   {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if(!foodList.isEmpty()){
-            for (Food f:foodList
-                    ) {
+            for (Food f:foodList) {
                 g.drawImage(f.getImg(), f.getX(),f.getY(),32,32,null);
             }
 

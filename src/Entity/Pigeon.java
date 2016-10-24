@@ -116,14 +116,14 @@ public class Pigeon extends Thread implements Observable {
 
     @Override
     public void newFood(List<Food> foodList) {
-        //list des plat a dispo go eat
-        System.out.println("notified");
+
         this.foodList = foodList;
-        cible = findFreshFood();
+        cible = findFreshFood(this.foodList.size()-1);
     }
 
     //move function
     public void move() throws InterruptedException {
+        System.out.println("Move");
         while ((abs(getX() - cible.getX()) >= 10) || (abs(getY() - cible.getY()) >= 10)){
             if (abs(getX() - cible.getX()) < 10) {
 
@@ -153,11 +153,12 @@ public class Pigeon extends Thread implements Observable {
         eat();
     }
 
-    public Food findFreshFood() {
+    public Food findFreshFood(int index) {
+        System.out.println("Find fresh food");
         synchronized (lock) {
 
             if (!this.foodList.isEmpty()) {
-                cible = this.foodList.get(0);
+                cible = this.foodList.get(index);
             } else {
                 cible = null;
             }
@@ -167,12 +168,22 @@ public class Pigeon extends Thread implements Observable {
     }
 
     public void eat(){
-        this.foodList.remove(0);
+
+        if (cible instanceof FreshFood) {
+            System.out.println("Eat");
+            this.foodList.remove(cible);
+        }
+
         synchronized (lock) {
             cible = null;
         }
-        System.out.println("manger !!");
-        findFreshFood();
+
+        for (Food f : foodList) {
+            if (f instanceof FreshFood) {
+                findFreshFood(foodList.indexOf(f));
+            }
+        }
+
         ground.repaint();
     }
 

@@ -184,6 +184,7 @@ public class Pigeon extends Thread implements Observable {
             }
         }
 
+        getGround().initTimer();
         ground.repaint();
     }
 

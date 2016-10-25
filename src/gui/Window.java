@@ -30,10 +30,6 @@ public class Window extends JFrame {
         container.add(ground);
         ((Ground)ground).startPigeon();
 
-
-
         setVisible(true);
     }
-
-
 }

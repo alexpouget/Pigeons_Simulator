@@ -8,6 +8,8 @@ import pattern.Observable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -22,7 +24,7 @@ public class Ground extends JPanel implements Observable   {
     private List<Food> foodList;
     private List<Observable> pigeonList;
     private Pigeon jeannot;
-    private Image img = Toolkit.getDefaultToolkit().getImage("./ressource/sprite/pigeons.png");
+    private int countTimer = 15;
 
     public Ground() {
         pigeonList = new ArrayList<>();
@@ -30,7 +32,16 @@ public class Ground extends JPanel implements Observable   {
         setBackground(Color.DARK_GRAY);
         addMouseListener(new AddFood());
 
+        ActionListener actionListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                countTimer -=1;
+                System.out.println("countdown : " + countTimer);
+            }
+        };
 
+        Timer timer = new Timer(1000, actionListener);
+        timer.start();
 
     }
 
@@ -54,7 +65,6 @@ public class Ground extends JPanel implements Observable   {
         g.drawImage(jeannot.getImg(), jeannot.getX(),jeannot.getY(),48,48,null);
         g.dispose();
     }
-
 
     @Override
     public void newFood(List<Food> foodList) {
@@ -91,6 +101,7 @@ public class Ground extends JPanel implements Observable   {
                     super.run();
                     Random rnd = new Random();
                     int rand = rnd.nextInt();
+                    initTimer();
                     switch (rand%5){
                         case 0:
                             foodList.add(new RottenFood(e.getX(),e.getY()));
@@ -128,6 +139,10 @@ public class Ground extends JPanel implements Observable   {
         public void mouseExited(MouseEvent e) {
 
         }
+    }
+
+    public void initTimer() {
+        countTimer = 15;
     }
 
 }

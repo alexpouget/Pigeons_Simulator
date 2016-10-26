@@ -5,6 +5,7 @@ import pattern.Observable;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.plaf.synth.SynthEditorPaneUI;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -27,32 +28,7 @@ public class Pigeon extends Thread implements Observable {
     private List<Food> foodList;
     private final Object lock = new Object();
 
-
-    public Pigeon() {
-        x = 0;
-        y = 0;
-        try {
-            this.img = ImageIO.read(new File("./ressource/sprite/pigeons.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public Pigeon(int x, int y, String pigeonName) {
-        this.x = x;
-        this.y = y;
-        try {
-            this.img = ImageIO.read(new File("./ressource/sprite/pigeons.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.pigeonName = pigeonName;
-
-
-    }
-
-    public Pigeon(int x, int y, String pigeonName,Ground ground) {
+    public Pigeon(int x, int y, String pigeonName, Ground ground) {
         this.x = x;
         this.y = y;
 
@@ -121,9 +97,12 @@ public class Pigeon extends Thread implements Observable {
         cible = findFreshFood(this.foodList.size()-1);
     }
 
-    //move function
+    /**
+     * Move function
+     *
+     * @throws InterruptedException
+     */
     public void move() throws InterruptedException {
-        System.out.println("Move");
         while ((abs(getX() - cible.getX()) >= 10) || (abs(getY() - cible.getY()) >= 10)){
             if (abs(getX() - cible.getX()) < 10) {
 
@@ -153,8 +132,50 @@ public class Pigeon extends Thread implements Observable {
         eat();
     }
 
+    /**
+     * Move randomly
+     *
+     * @param min
+     * @param max
+     */
+    //moveRandom function
+    public void moveRandom(int min, int max) {
+
+        int newPositionX = getNewPostionInsideTheGround(min, max, getX(), getGround().getWidth());
+        int newPositionY = getNewPostionInsideTheGround(min, max, getY(), getGround().getHeight());
+
+        setX(newPositionX);
+        setY(newPositionY);
+    }
+
+    /**
+     * Return a new position (always inside the window)
+     *
+     * @param min
+     * @param max
+     * @param reference
+     * @param size
+     * @return
+     */
+    private int getNewPostionInsideTheGround(int min, int max, int reference, int size) {
+
+        int newPosition = reference + min + (int)(Math.random() * ((max - min) + 1));
+
+        while (newPosition < 10 || newPosition > size - 10) {
+            newPosition = reference + min + (int)(Math.random() * ((max - min) + 1));
+        }
+
+        return newPosition;
+    }
+
+
+    /**
+     * Find some food
+     *
+     * @param index
+     * @return
+     */
     public Food findFreshFood(int index) {
-        System.out.println("Find fresh food");
         synchronized (lock) {
 
             if (!this.foodList.isEmpty()) {
@@ -167,10 +188,12 @@ public class Pigeon extends Thread implements Observable {
         }
     }
 
-    public void eat(){
+    /**
+     * Eat function
+     */
+    public void eat() {
 
         if (cible instanceof FreshFood) {
-            System.out.println("Eat");
             this.foodList.remove(cible);
         }
 

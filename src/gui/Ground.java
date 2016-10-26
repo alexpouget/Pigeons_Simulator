@@ -6,12 +6,15 @@ import Entity.Pigeon;
 import Entity.RottenFood;
 import pattern.Observable;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -24,7 +27,7 @@ public class Ground extends JPanel implements Observable   {
     private List<Food> foodList;
     private List<Observable> pigeonList;
     private Pigeon jeannot;
-    private int countTimer = 15;
+    private float countTimer = 15;
 
     public Ground() {
         pigeonList = new ArrayList<>();
@@ -32,24 +35,34 @@ public class Ground extends JPanel implements Observable   {
         setBackground(Color.DARK_GRAY);
         addMouseListener(new AddFood());
 
+        //init Countdown
         ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                countTimer -=1;
-                System.out.println("countdown : " + countTimer);
+                countTimer -= 0.5;
+
+                if (countTimer < 10 && countTimer > 0) {
+                    jeannot.moveRandom(-20, 20);
+                    repaint();
+                } else if (countTimer < 0) {
+                    try {
+                        jeannot.setImg(ImageIO.read(new File("./ressource/sprite/pigeons-sleep.png")));
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                    repaint();
+                }
             }
         };
 
-        Timer timer = new Timer(1000, actionListener);
+        Timer timer = new Timer(500, actionListener);
         timer.start();
-
     }
 
     public void startPigeon(){
-        jeannot = new Pigeon(50,50,"jeannot",this);
+        jeannot = new Pigeon(100, 100, "jeannot", this);
         addObservableList(jeannot);
         jeannot.start();
-
     }
 
     @Override
@@ -59,7 +72,6 @@ public class Ground extends JPanel implements Observable   {
             for (Food f:foodList) {
                 g.drawImage(f.getImg(), f.getX(),f.getY(),32,32,null);
             }
-
         }
 
         g.drawImage(jeannot.getImg(), jeannot.getX(),jeannot.getY(),48,48,null);
@@ -143,6 +155,11 @@ public class Ground extends JPanel implements Observable   {
 
     public void initTimer() {
         countTimer = 15;
+        try {
+            jeannot.setImg(ImageIO.read(new File("./ressource/sprite/pigeons.png")));
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 
 }

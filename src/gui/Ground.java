@@ -42,6 +42,7 @@ public class Ground extends JPanel implements Observable   {
                 countTimer -= 0.5;
 
                 if (countTimer < 10 && countTimer > 0) {
+                    //todo change to all pigeons
                     jeannot.moveRandom(-20, 20);
                     repaint();
                 } else if (countTimer < 0) {
